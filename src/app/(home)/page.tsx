@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import SectionLargeSlider from "@/app/(home)/SectionLargeSlider";
 import BackgroundSection from "@/components/BackgroundSection/BackgroundSection";
@@ -24,29 +25,55 @@ import SectionSubscribe2 from "@/components/SectionSubscribe2/SectionSubscribe2"
 import SectionVideos from "@/components/Sections/SectionVideos";
 import SectionLatestPosts from "@/components/Sections/SectionLatestPosts";
 import SectionMagazine2 from "@/components/Sections/SectionMagazine2";
+import SectionSliderExplorer from "@/components/SectionSliderExplore/SectionSliderExplore";
+import { useQueries, useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { CategoriesApi } from "@/apis/CategoriesApi";
+import { useCustomQuery } from "@/hooks/useCustomQuery";
+import { Application, Category } from "@/data/types";
+import SectionAppsOfCategory from "@/components/SectionAppsOfCategory/SectionAppsOfCategory";
+import { retrieveDataFromResponse } from "@/utils/retrieveDataFromResponse";
+
 
 //
 const MAGAZINE1_POSTS = DEMO_POSTS.filter((_, i) => i >= 8 && i < 16);
 const MAGAZINE2_POSTS = DEMO_POSTS.filter((_, i) => i >= 0 && i < 7);
 //
 
-const PageHome = ({}) => {
+const PageHome = ({ }) => {
+  const { data: categories } = useCustomQuery<Category>({
+    key: "categories",
+    opts: {
+      populates: ["applications"]
+    }
+  });
+
   return (
     <div className="nc-PageHome relative">
       <div className="container relative">
-        <SectionLargeSlider
+        {/* <SectionLargeSlider
           className="pt-10 pb-16 md:py-16 lg:pb-28 lg:pt-20"
           posts={DEMO_POSTS?.filter((_, i) => i < 3)}
-        />
+        /> */}
+        <SectionSliderExplorer
+          heading="Explore 991 apps in TON Ecosystem"
+          categories={categories || []}
 
-        <div className="relative py-16">
+        />
+        {(categories || []).map((category, index) =>
+          <SectionAppsOfCategory
+            key={index}
+            heading={category.name}
+            subHeading={category.subTitle}
+            applications={retrieveDataFromResponse<Application>(category.applications.data)} />)}
+        {/* <div className="relative py-16">
           <BackgroundSection />
           <SectionSliderNewAuthors
             heading="Newest authors"
             subHeading="Say hello to future creator potentials"
             authors={DEMO_AUTHORS.filter((_, i) => i < 10)}
           />
-        </div>
+        </div> */}
 
         <SectionSliderNewCategories
           className="py-16 lg:py-28"

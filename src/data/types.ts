@@ -9,8 +9,8 @@ export interface CustomLink {
 }
 
 //  ##########  PostDataType ######## //
-export interface TaxonomyType {
-  id: string | number;
+export interface TaxonomyType extends BaseData {
+  // id: string | number;
   name: string;
   href: Route;
   count?: number;
@@ -59,7 +59,48 @@ export interface PostDataType {
   audioUrl?: string | string[];
   galleryImgs?: string[];
 }
+export interface BaseData {
+  id: number;
+}
+//category
+export interface Category extends BaseData {
+  name: string;
+  description: string;
+  subTitle: string;
+  images?: string[];
+  href: Route;
+  icon: string;
+  applications: PopulateResponse<Application>;
+}
+//application
+export interface Application extends TaxonomyType {
+  subTitle: string;
+  description: string;
+  logo: string;
+  developers: string;
+  sliderImages: string[];
+  rating: number;
+  category: Category;
+  href: Route;
+}
+interface Pagination {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+}
 
+export interface DataResponse<T extends BaseData> {
+  id: T["id"];
+  attributes: Omit<T, "id">;
+}
+export interface PopulateResponse<T extends BaseData> {
+  data: DataResponse<T>[];
+}
+export interface ObjectResponse<T extends BaseData> {
+  data: DataResponse<T>[];
+  meta?: Pagination;
+}
 export type TwMainColor =
   | "pink"
   | "green"
