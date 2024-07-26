@@ -2,33 +2,37 @@ import { BaseData, ObjectResponse } from "@/data/types";
 import http from "@/utils/http";
 import { useQuery } from "@tanstack/react-query";
 import qs from "qs";
-export type TypeKeys = "categories" | "applications" | "reviews";
+export type TypeKeys = "categories" | "applications" | "reviews" |"blogs";
 export interface OptionQueryProps<T> {
   id?: number;
   populates?: (keyof T)[];
 }
 export const useCustomQuery = <T extends BaseData>({
   key,
-  opts
-
+  id,
+  urlParamsObject,
 }: {
   key: TypeKeys;
-  opts?: OptionQueryProps<T>;
+  id?: number;
+  urlParamsObject?: {};
 }) => {
-  const query = qs.stringify(
-    {
-      populate: opts?.populates
-    },
-    {
-      encodeValuesOnly: true, // prettify URL
-    }
-  );
-  const { data } = useQuery({
-    queryKey: [key],
+  const query = qs.stringify(urlParamsObject, {
+    encodeValuesOnly: true,
+  });
+  const { data, isLoading } = useQuery({
+    queryKey: [key, urlParamsObject],
     queryFn: async () => {
       try {
-        const res = await http.get<ObjectResponse<T>>(`/${key}?${query}`);
-        const { data, meta } = res.data;
+        const res = await http.get<ObjectResponse<T>>(
+          `/${key}${id ? `/${id}` : ""}${query ? `?${query}` : ""}`
+        );
+        const { data } = res.data;
+        if (!Array.isArray(data)) {
+          return {
+            id: data.id,
+            ...data.attributes,
+          } as T;
+        }
         return data.map((item) => {
           return {
             id: item.id,
@@ -40,5 +44,5 @@ export const useCustomQuery = <T extends BaseData>({
       }
     },
   });
-  return { data };
+  return { data, isLoading };
 };

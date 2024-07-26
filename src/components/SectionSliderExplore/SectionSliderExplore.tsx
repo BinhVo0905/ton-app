@@ -21,7 +21,7 @@ const SectionSliderExplorer: FC<SectionSliderExplorerProps> = ({
   itemPerRow = 8,
 }) => {
   return (
-    <div className={`nc-SectionSliderExplorer ${className}`}>
+    <div className={`nc-SectionSliderExplorer ${className}  `}>
       <Heading desc="" isCenter>
         {heading}
       </Heading>

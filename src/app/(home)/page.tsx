@@ -30,9 +30,10 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { CategoriesApi } from "@/apis/CategoriesApi";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
-import { Application, Category } from "@/data/types";
+import { Application, Blog, Category, DataResponse } from "@/data/types";
 import SectionAppsOfCategory from "@/components/SectionAppsOfCategory/SectionAppsOfCategory";
 import { retrieveDataFromResponse } from "@/utils/retrieveDataFromResponse";
+import SectionBlog from "@/components/SectionBlog/SectionBlog";
 
 
 //
@@ -43,9 +44,19 @@ const MAGAZINE2_POSTS = DEMO_POSTS.filter((_, i) => i >= 0 && i < 7);
 const PageHome = ({ }) => {
   const { data: categories } = useCustomQuery<Category>({
     key: "categories",
-    opts: {
-      populates: ["applications"]
+    urlParamsObject: {
+      populate: {
+        applications: {
+          populate: {
+            logo: { fields: ["url"] }
+          }
+        }
+      }
     }
+  });
+  const { data: blogs } = useCustomQuery<Blog>({
+    key: "blogs",
+
   });
 
   return (
@@ -56,16 +67,26 @@ const PageHome = ({ }) => {
           posts={DEMO_POSTS?.filter((_, i) => i < 3)}
         /> */}
         <SectionSliderExplorer
+          className="pt-10"
           heading="Explore 991 apps in TON Ecosystem"
-          categories={categories || []}
-
+          categories={categories as Category[] || []}
         />
-        {(categories || []).map((category, index) =>
-          <SectionAppsOfCategory
+        <SectionBlog
+          className="mt-10 p-5"
+          heading="News"
+          blogs={blogs as Blog[] || []}
+        />
+        {(categories as Category[] || []).map((category, index) => {
+          const appData = category.applications.data as DataResponse<Application>[];
+          return <SectionAppsOfCategory
             key={index}
+            className="py-16 lg:py-28"
             heading={category.name}
+            gridClass="md:grid-cols-2 lg:grid-cols-3"
             subHeading={category.subTitle}
-            applications={retrieveDataFromResponse<Application>(category.applications.data)} />)}
+            applications={retrieveDataFromResponse<Application>(appData)} />;
+        }
+        )}
         {/* <div className="relative py-16">
           <BackgroundSection />
           <SectionSliderNewAuthors

@@ -19,9 +19,9 @@ const CategoryExplorer: FC<CategoryExplorerProps> = ({
     return (
         <Link
             href={href}
-            className={`flex flex-row justify-center py-2 bg-white dark:bg-neutral-800 rounded-2xl ${className}`}
+            className={`flex flex-row justify-center py-2 bg-neutral-300 dark:bg-neutral-800 rounded-2xl ${className}`}
         >
-            <Image src={icon} alt="" />
+            <Image src={icon || ""} alt="" />
             <span className={`text-sm font-semibold`}>{name}</span>
         </Link>
     );

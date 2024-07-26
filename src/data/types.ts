@@ -1,5 +1,8 @@
 import { Route } from "@/routers/types";
+import { RootNode } from "@strapi/blocks-react-renderer/dist/BlocksRenderer";
+import { extend } from "lodash";
 import { StaticImageData } from "next/image";
+import { StringLiteral } from "typescript";
 
 //  ######  CustomLink  ######## //
 export interface CustomLink {
@@ -62,26 +65,76 @@ export interface PostDataType {
 export interface BaseData {
   id: number;
 }
+export type MediaData = {
+  attributes: {
+    url: string;
+  };
+};
+//user
+export interface User extends BaseData {
+  username: string;
+  email: string;
+}
 //category
 export interface Category extends BaseData {
   name: string;
   description: string;
   subTitle: string;
-  images?: string[];
+  images: {
+    data: MediaData[];
+  };
   href: Route;
-  icon: string;
-  applications: PopulateResponse<Application>;
+  icon: {
+    data: MediaData;
+  };
+  applications: {
+    data: DataResponse<Application>[];
+  };
+  featuredApp: {
+    data: DataResponse<Application>[];
+  };
 }
+
 //application
 export interface Application extends TaxonomyType {
   subTitle: string;
   description: string;
-  logo: string;
+  logo: {
+    data: MediaData;
+  };
   developers: string;
-  sliderImages: string[];
+  sliderImages: {
+    data: MediaData[];
+  };
   rating: number;
   category: Category;
   href: Route;
+  reviews: {
+    data: DataResponse<Review>[];
+  };
+}
+//blog
+export interface Blog extends BaseData {
+  name: string;
+  description?: String;
+  featuredImage: {
+    data: MediaData;
+  }
+  content: RootNode[];
+
+}
+//review
+export interface Review extends BaseData {
+  content: string;
+  rating: number;
+  application: {
+    data: DataResponse<Application>;
+  };
+  author: {
+    data: DataResponse<User>;
+  };
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }
 interface Pagination {
   page: number;
@@ -95,12 +148,13 @@ export interface DataResponse<T extends BaseData> {
   attributes: Omit<T, "id">;
 }
 export interface PopulateResponse<T extends BaseData> {
-  data: DataResponse<T>[];
+  data: DataResponse<T>[] | DataResponse<T>;
 }
 export interface ObjectResponse<T extends BaseData> {
-  data: DataResponse<T>[];
+  data: DataResponse<T>[] | DataResponse<T>;
   meta?: Pagination;
 }
+export interface MediaProps {}
 export type TwMainColor =
   | "pink"
   | "green"

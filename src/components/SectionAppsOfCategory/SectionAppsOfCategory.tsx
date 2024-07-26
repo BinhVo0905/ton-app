@@ -12,6 +12,7 @@ import MySlider from "../MySlider";
 import Button from "../Button/Button";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import CardApplication from "../CardApplication/CardApplication";
+import { Route } from "next";
 
 export interface SectionAppsOfCategoryProps {
   className?: string;
@@ -43,18 +44,14 @@ const SectionAppsOfCategory: FC<SectionAppsOfCategoryProps> = ({
             <ArrowRightIcon className="ms-3 w-6 h-6 rtl:rotate-180" />
           </Button>
         </div>
-
       </div>
-
       <div className={`grid gap-6 md:gap-8 ${gridClass}`}>
         {applications.map((item, index) => {
           const topIndex = index < 3 ? `#${index + 1}` : undefined;
-          return <CardApplication key={index} index={topIndex} application={item} />;
+          return <CardApplication key={index} app={item} />;
         })}
       </div>
-      <div className="flex mt-20 justify-center items-center">
-
-      </div>
+     
     </div>
   );
 };

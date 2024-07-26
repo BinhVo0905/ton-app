@@ -1,78 +1,78 @@
+"use client";
+
 import React, { FC } from "react";
-import { Application, TaxonomyType, TwMainColor } from "@/data/types";
-import Badge from "@/components/Badge/Badge";
+import { Application, PostDataType } from "@/data/types";
 import Link from "next/link";
+import ButtonPlayMusicPlayer from "../ButtonPlayMusicPlayer";
 import Image from "next/image";
+import { PauseIcon, PlayIcon } from "@heroicons/react/24/solid";
+import { getStrapiMedia } from "@/utils/apiHelpers";
 
 export interface CardApplicationProps {
   className?: string;
-  application: Application;
-  index?: string;
+  app: Application;
 }
 
 const CardApplication: FC<CardApplicationProps> = ({
-  className = "",
-  application,
-  index,
+  className = "h-full",
+  app,
 }) => {
-  const { href, name, subTitle, logo, color } = application;
-  const getColorClass = () => {
-    switch (color) {
-      case "pink":
-        return "bg-pink-500";
-      case "red":
-        return "bg-red-500";
-      case "gray":
-        return "bg-gray-500";
-      case "green":
-        return "bg-green-500";
-      case "purple":
-        return "bg-purple-500";
-      case "indigo":
-        return "bg-indigo-500";
-      case "yellow":
-        return "bg-yellow-500";
-      case "blue":
-        return "bg-blue-500";
-      default:
-        return "bg-pink-500";
-    }
+  console.log(app)
+
+  const { name, href, subTitle, logo, id } = app;
+
+  const renderDefaultBtnListen = (state?: "playing") => {
+    return (
+      <div className="inline-flex items-center mt-3 pe-4 py-0.5 hover:ps-0.5 cursor-pointer rounded-full transition-all hover:bg-primary-50 dark:hover:bg-neutral-900">
+        <span className="w-8 h-8 flex items-center justify-center rounded-full bg-primary-50 dark:bg-neutral-800 text-primary-6000 dark:text-primary-200">
+          {state === "playing" ? (
+            <PauseIcon className="w-5 h-5" />
+          ) : (
+            <PlayIcon className="w-5 h-5 rtl:rotate-180" />
+          )}
+        </span>
+
+        <span className="ms-3 text-xs sm:text-sm font-medium">
+          {state === "playing" ? "Now playing" : "Listen now"}
+        </span>
+      </div>
+    );
   };
 
   return (
-    <Link href={href} className={`nc-CardApplication flex flex-col ${className}`}>
-      <div className="flex-shrink-0 relative w-full aspect-w-7 aspect-h-5 h-0 rounded-3xl overflow-hidden group">
-        <Image
-          alt="taxonomies"
-          fill
-          src={logo || ""}
-          className="object-cover w-full h-full rounded-2xl"
-          sizes="(min-width: 1024px) 20rem, (min-width: 640px) 16rem, 12rem"
-        />
-        <div>
-          {index && (
-            <Badge
-              color={color as TwMainColor}
-              name={index}
-              className="absolute top-3 start-3"
-            />
-          )}
-        </div>
-        <span className="opacity-0 group-hover:opacity-100 absolute inset-0 bg-black bg-opacity-10 transition-opacity"></span>
+    <div
+      className={`nc-CardApplication relative flex group items-center p-3 rounded-3xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 ${className}`}
+    >
+      <div className="w-1/4 flex-shrink-0">
+        <Link
+          href={`${href}?id=${id}`}
+          className="block h-0 aspect-w-1 aspect-h-1 relative rounded-full overflow-hidden shadow-lg"
+        >
+          <Image
+            className="object-cover w-full h-full"
+            src={getStrapiMedia(logo.data.attributes.url) || ""}
+            fill
+            alt={name}
+            sizes="100px"
+          />
+        </Link>
       </div>
 
-      <div className="flex items-center mt-5">
-        <div className={`w-9 h-9 ${getColorClass()} rounded-full`}></div>
-        <div className="ms-4">
-          <h2 className="text-base text-neutral-900 dark:text-neutral-100 font-medium">
+      <div className="flex flex-col flex-grow ms-4">
+        <h2 className={`nc-card-title block font-semibold text-sm sm:text-lg`}>
+          <Link
+            href={`${href}?id=${id}`}
+            className={`line-clamp-1`}
+            title={name}
+          >
             {name}
-          </h2>
-          <span className="block text-sm text-neutral-500 dark:text-neutral-400">
-            {subTitle}
-          </span>
-        </div>
+          </Link>
+        </h2>
+        <span className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 ">
+          {subTitle}
+        </span>
       </div>
-    </Link>
+    </div>
   );
 };
 
