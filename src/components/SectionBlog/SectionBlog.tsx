@@ -42,7 +42,7 @@ const SectionBlog: FC<SectionBlogProps> = ({
       <div className={`flex flex-column`}>
         {blogs.map((item, index) => {
 
-          return <Link href={`/blog/${item.id}`} key={index} className="flex flex-row items-center">
+          return <Link href={`/blog/${item.id}`} key={index} className="flex flex-row items-center hover:text-neutral-500">
             
               <Image className="rounded-xl" width={40} height={40} alt="" src="/tonImage.jfif" />
           

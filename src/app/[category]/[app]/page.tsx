@@ -1,19 +1,25 @@
 'use client'
+import { ReviewsApi } from "@/apis/ReviewsApi";
 import SingleCommentForm from "@/app/(singles)/SingleCommentForm";
 import SingleCommentLists from "@/app/(singles)/SingleCommentLists";
 import ButtonPrimary from "@/components/Button/ButtonPrimary";
 import Media from "@/components/Media";
 import MySlider from "@/components/MySlider";
-import { Application, DataResponse, Review } from "@/data/types";
+import { Application, DataResponse, Review, ReviewFormData } from "@/data/types";
+import { useCustomMutation } from "@/hooks/useCustomMutation";
 import { useCustomQuery } from "@/hooks/useCustomQuery";
 import { getStrapiMedia } from "@/utils/apiHelpers";
 import { retrieveDataFromResponse } from "@/utils/retrieveDataFromResponse";
-import { filter } from "lodash";
+import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import { MutableRefObject, useRef } from "react";
 const ApplicationPage = () => {
     const searchParams = useSearchParams();
     const id = searchParams.get("id");
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const { mutate } = useCustomMutation({ key: "reviews", type: "create", queryKey: "applications" })
+
     const { data, isLoading } = useCustomQuery<Application>({
         key: "applications", id: Number(id), urlParamsObject: {
             populate: {
@@ -28,12 +34,28 @@ const ApplicationPage = () => {
             }
         }
     });
+    const handleSubmit = () => {
+        const content = textareaRef.current?.value || "";
+        const data: ReviewFormData = {
+            content,
+            author: 1,
+            application: Number(id)
+        }
+        mutate({ data });
+        if (textareaRef.current !== null) {
+            textareaRef.current.value = ""
+        }
+
+
+
+
+    }
+
     if (isLoading) {
         return <></>;
     }
     else {
         const app = data as Application;
-        console.log(app)
         const reviews = retrieveDataFromResponse(app.reviews ? app.reviews.data : []);
         return (<div className="container">
             <div className="py-4 flex flex-row justify-between">
@@ -75,7 +97,9 @@ const ApplicationPage = () => {
                 <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">
                     Responses ({reviews.length})
                 </h3>
-                <SingleCommentForm />
+                <SingleCommentForm
+                    textareaRef={textareaRef}
+                    onClickSubmit={handleSubmit} />
             </div>
             <div className="max-w-screen-md mt-10">
                 <SingleCommentLists reviews={reviews} />

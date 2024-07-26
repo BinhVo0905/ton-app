@@ -136,6 +136,12 @@ export interface Review extends BaseData {
   createdAt: Date | string;
   updatedAt: Date | string;
 }
+export type ReviewFormData = {
+  content: Review["content"];
+  application: number;
+  author: number;
+  rating?: number;
+}
 interface Pagination {
   page: number;
   pageSize: number;
