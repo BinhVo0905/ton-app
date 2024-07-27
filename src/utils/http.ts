@@ -1,12 +1,10 @@
 import axios, { AxiosInstance } from "axios";
 
-export const endpoint = "http://localhost:1337/api";
-
 class Http {
   instance: AxiosInstance;
   constructor() {
     this.instance = axios.create({
-      baseURL: "http://localhost:1337/api/",
+      baseURL: "https://whimsical-renewal-be49f9c7e3.strapiapp.com/api/",
       timeout: 1000,
       headers: {
         "Content-Type": "application/json",
