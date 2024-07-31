@@ -1,8 +1,12 @@
 import axios, { AxiosInstance } from "axios";
-const token = localStorage.getItem('token') || "";
+
 class Http {
   instance: AxiosInstance;
   constructor() {
+    let token = "";
+    if (typeof window !== "undefined") {
+      token = localStorage.getItem("token") || ""
+    }
     this.instance = axios.create({
       baseURL: "https://whimsical-renewal-be49f9c7e3.strapiapp.com/api/",
       // timeout: 10000,

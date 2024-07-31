@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import Logo from "@/components/Logo/Logo";
 import MenuBar from "@/components/MenuBar/MenuBar";
 import AvatarDropdown from "./AvatarDropdown";
@@ -12,6 +12,15 @@ import ButtonLogin from "../ButtonLogin/ButtonLogin";
 export interface MainNav2LoggedProps { }
 
 const MainNav2Logged: FC<MainNav2LoggedProps> = () => {
+  const [token, setToken] = useState("")
+
+  useEffect(() => {
+    let value
+    // Get the value from local storage if it exists
+    value = localStorage.getItem("token") || ""
+    setToken(value)
+  }, [])
+
   const renderContent = () => {
     return (
       <div className="h-20 flex justify-between">
@@ -28,10 +37,10 @@ const MainNav2Logged: FC<MainNav2LoggedProps> = () => {
         </div>
 
         <div className="flex-1 flex items-center justify-end text-slate-700 dark:text-slate-100">
-          {!localStorage.getItem("token") && <ButtonLogin />}
+          {token === "" && <ButtonLogin />}
           <SearchModal />
           <NotifyDropdown />
-          {localStorage.getItem("token") && <AvatarDropdown />}
+          {token!=="" && <AvatarDropdown />}
         </div>
       </div>
     );
