@@ -14,6 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { MutableRefObject, useRef } from "react";
+import { Rating } from "@mui/material";
 const ApplicationPage = () => {
     const searchParams = useSearchParams();
     const id = searchParams.get("id");
@@ -57,53 +58,69 @@ const ApplicationPage = () => {
     else {
         const app = data as Application;
         const reviews = retrieveDataFromResponse(app.reviews ? app.reviews.data : []);
-        return (<div className="container">
-            <div className="py-4 flex flex-row justify-between">
-                <div className="flex flex-row">
-                    <span className="block flex-shrink-0 relative w-full aspect-w-16 aspect-h-9 rounded-xl overflow-hidden">
-                        <Image
-                            fill
-                            className="object-cover"
-                            alt=""
-                            sizes="(max-width: 600px) 480px, 800px"
-                            src={getStrapiMedia(app.logo.data.attributes.url) || ""}
-                        />
-                    </span>
-                    <div className="whitespace-nowrap ml-10">
-                        <h3 className="font-semibold text-2xl">{app.name}</h3>
-                        <p className="text-neutral-500">{app.subTitle}</p>
+        return (<div className="relative">
+            <div className="container relative">
+                <div className="py-4 flex md:flex-row flex-col justify-between">
+                    <div className="flex flex-row">
+                        <div className=" md:w-28 md:h-28 w-20 h-20 flex-shrink-0 relative rounded-xl overflow-hidden">
+                            <Image
+                                fill
+                                className="object-cover"
+                                alt=""
+                                sizes="(max-width: 600px) 30vw, 40vw"
+                                src={getStrapiMedia(app.logo.data.attributes.url) || ""}
+                                unoptimized={true}
+                            />
+                        </div>
+                        <div className="ml-10">
+                            <h3 className="font-semibold md:text-2xl text-lg">{app.name}</h3>
+                            <p className="text-neutral-500 md:text-base text-sm py-2">{app.subTitle}</p>
+                            <div className="flex items-center">
+                                <span className="md:text-2xl text-lg font-semibold">{app.rating}</span>
+                                <Rating
+                                    value={app.rating}
+                                    precision={0.01}
+                                    size="small"
+                                    readOnly
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex h-20 md:w-auto w-full">
+                        <ButtonPrimary className="mt-8 w-full">Open app</ButtonPrimary>
                     </div>
                 </div>
-                <div className="flex h-20">
-                    <ButtonPrimary className="mt-8">Open app</ButtonPrimary>
+                <MySlider
+                    className="py-10"
+                    data={app.sliderImages.data || []}
+                    renderItem={(item, indx) => <Media key={indx} data={item} />}
+                    itemPerRow={5}
+                />
+                <div className="body">
+                    
+                </div>
+                <div>
+                    <div className="border-neutral-200 py-6">
+                        <h3 className="font-semibold text-xl">Description</h3>
+                        <div className="text-neutral-500 text-sm py-3" >{app.description}</div>
+                    </div>
+                </div>
+                <div
+                    id="comments"
+                    className="scroll-mt-20 max-w-screen-md"
+                >
+                    <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">
+                        Responses ({reviews.length})
+                    </h3>
+                    <SingleCommentForm
+                        textareaRef={textareaRef}
+                        onClickSubmit={handleSubmit} />
+                </div>
+                <div className="max-w-screen-md mt-10">
+                    <SingleCommentLists reviews={reviews} />
                 </div>
             </div>
-            <MySlider
-                className="py-10"
-                data={app.sliderImages.data || []}
-                renderItem={(item, indx) => <Media key={indx} data={item} />}
-                itemPerRow={5}
-            />
-            <div>
-                <div className="border-neutral-200 py-6">
-                    <h3 className="font-semibold text-xl">Description</h3>
-                    <div className="text-neutral-500 text-sm py-3" >{app.description}</div>
-                </div>
-            </div>
-            <div
-                id="comments"
-                className="scroll-mt-20 max-w-screen-md"
-            >
-                <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">
-                    Responses ({reviews.length})
-                </h3>
-                <SingleCommentForm
-                    textareaRef={textareaRef}
-                    onClickSubmit={handleSubmit} />
-            </div>
-            <div className="max-w-screen-md mt-10">
-                <SingleCommentLists reviews={reviews} />
-            </div>
+
         </div>);
     }
 

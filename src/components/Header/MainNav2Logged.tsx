@@ -7,8 +7,9 @@ import AvatarDropdown from "./AvatarDropdown";
 import Navigation from "@/components/Navigation/Navigation";
 import SearchModal from "./SearchModal";
 import NotifyDropdown from "./NotifyDropdown";
+import ButtonLogin from "../ButtonLogin/ButtonLogin";
 
-export interface MainNav2LoggedProps {}
+export interface MainNav2LoggedProps { }
 
 const MainNav2Logged: FC<MainNav2LoggedProps> = () => {
   const renderContent = () => {
@@ -27,9 +28,10 @@ const MainNav2Logged: FC<MainNav2LoggedProps> = () => {
         </div>
 
         <div className="flex-1 flex items-center justify-end text-slate-700 dark:text-slate-100">
+          {!localStorage.getItem("token") && <ButtonLogin />}
           <SearchModal />
           <NotifyDropdown />
-          <AvatarDropdown />
+          {localStorage.getItem("token") && <AvatarDropdown />}
         </div>
       </div>
     );

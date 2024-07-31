@@ -2,17 +2,16 @@
 
 import React, { FC } from "react";
 import Heading from "@/components/Heading/Heading";
-import { Application, TaxonomyType } from "@/data/types";
-import CardCategory3 from "@/components/CardCategory3/CardCategory3";
-import CardCategory4 from "@/components/CardCategory4/CardCategory4";
-import CardCategory1 from "@/components/CardCategory1/CardCategory1";
-import CardCategory2 from "@/components/CardCategory2/CardCategory2";
-import CardCategory5 from "@/components/CardCategory5/CardCategory5";
-import MySlider from "../MySlider";
+import { Application, TaxonomyType, Token } from "@/data/types";
+import { Paper, Table, TableCell, TableContainer, TableHead, TableRow, TableBody } from "@mui/material";
 import Button from "../Button/Button";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import CardApplication from "../CardApplication/CardApplication";
-import { Route } from "next";
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
+import { formatNumber } from "@/utils/convertNumbThousand";
+import Image from "next/image";
+import TableTokens from "../TableTokens/TableTokens";
+
 
 export interface SectionAppsOfCategoryProps {
   className?: string;
@@ -21,7 +20,9 @@ export interface SectionAppsOfCategoryProps {
   applications: Application[];
   headingIsCenter?: boolean;
   gridClass?: string;
+  tokens?: Token[];
 }
+
 
 const SectionAppsOfCategory: FC<SectionAppsOfCategoryProps> = ({
   heading,
@@ -30,10 +31,12 @@ const SectionAppsOfCategory: FC<SectionAppsOfCategoryProps> = ({
   applications,
   headingIsCenter = false,
   gridClass = "",
+  
 }) => {
 
   return (
     <div className={`nc-SectionAppsOfCategory ${className}`}>
+
       <div className={`flex justify-between`}>
         <Heading desc={subHeading} isCenter={headingIsCenter}>
           {heading}
@@ -45,13 +48,14 @@ const SectionAppsOfCategory: FC<SectionAppsOfCategoryProps> = ({
           </Button>
         </div>
       </div>
-      <div className={`grid gap-6 md:gap-8 ${gridClass}`}>
+      {heading === "Jettons" ? <TableTokens perPage={3} /> : <div className={`grid gap-6 md:gap-8 ${gridClass}`}>
         {applications.map((item, index) => {
           const topIndex = index < 3 ? `#${index + 1}` : undefined;
           return <CardApplication key={index} app={item} />;
         })}
-      </div>
-     
+      </div>}
+
+
     </div>
   );
 };

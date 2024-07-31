@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TypeKeys } from "./useCustomQuery";
 import http from "@/utils/http";
-
 interface MutationProps {
   key: TypeKeys;
   queryKey?: TypeKeys;
@@ -19,6 +18,7 @@ export const useCustomMutation = ({
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: any) => {
+      console.log(data);
       switch (type) {
         case "create":
           return http.post(`/${key}`, data);

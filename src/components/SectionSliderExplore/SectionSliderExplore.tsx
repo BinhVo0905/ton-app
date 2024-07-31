@@ -18,7 +18,7 @@ const SectionSliderExplorer: FC<SectionSliderExplorerProps> = ({
   heading = "",
   className = "",
   categories,
-  itemPerRow = 8,
+  itemPerRow = 5,
 }) => {
   return (
     <div className={`nc-SectionSliderExplorer ${className}  `}>
@@ -26,6 +26,7 @@ const SectionSliderExplorer: FC<SectionSliderExplorerProps> = ({
         {heading}
       </Heading>
       <MySlider
+        className="px-20"
         itemPerRow={itemPerRow}
         data={categories}
         renderItem={(item, index) => (

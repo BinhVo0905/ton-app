@@ -31,13 +31,18 @@ import { Application, Blog, Category, DataResponse } from "@/data/types";
 import SectionAppsOfCategory from "@/components/SectionAppsOfCategory/SectionAppsOfCategory";
 import { retrieveDataFromResponse } from "@/utils/retrieveDataFromResponse";
 import SectionBlog from "@/components/SectionBlog/SectionBlog";
+import StatisticCard from "@/components/StatisticCard/StatisticCard";
+import { useQuery } from "@tanstack/react-query";
+import { TokensApi } from "@/apis/tokensApi";
+import MySlider from "@/components/MySlider";
+import PromotedApp from "@/components/PromotedApp/PromotedApp";
+
 
 
 //
 const MAGAZINE1_POSTS = DEMO_POSTS.filter((_, i) => i >= 8 && i < 16);
 const MAGAZINE2_POSTS = DEMO_POSTS.filter((_, i) => i >= 0 && i < 7);
 //
-
 const PageHome = ({ }) => {
   const { data: categories } = useCustomQuery<Category>({
     key: "categories",
@@ -53,9 +58,20 @@ const PageHome = ({ }) => {
   });
   const { data: blogs } = useCustomQuery<Blog>({
     key: "blogs",
-
   });
-
+  const { data: tonData } = useQuery({ queryKey: ["tonData"], queryFn: () => TokensApi.getById("the-open-network") });
+  const { data: promotedApp } = useCustomQuery({
+    key: "applications", urlParamsObject: {
+      filters: {
+        href: {
+          $contains: "empty"
+        }
+      },
+      populate: {
+        logo: { fields: ["url"] }
+      }
+    }
+  })
   return (
     <div className="nc-PageHome relative">
       <div className="container relative">
@@ -68,16 +84,33 @@ const PageHome = ({ }) => {
           heading="Explore 991 apps in TON Ecosystem"
           categories={categories as Category[] || []}
         />
+        <div className="flex flex-col md:gap-4 gap-2"> 
         <SectionBlog
           className="mt-10 p-5"
           heading="News"
           blogs={blogs as Blog[] || []}
         />
+        <div className="flex lg:flex-row flex-col lg:gap-4 gap-2">
+          <div className="lg:flex-1 bg-white rounded-xl p-4 flex flex-row items-center">
+            <h2 className="md:text-base text-sm whitespace-nowrap font-semibold">Promoted Apps</h2>
+            <MySlider className="px-4 overflow-hidden lg:overflow-visible" data={promotedApp as Application[] || []} itemPerRow={5} renderItem={(item, index) => <PromotedApp application={item} key={index} />} />
+          </div>
+          {tonData && <div className="lg:flex-1 flex lg:gap-4 gap-2">
+            <div className="flex-1">
+              <StatisticCard value={tonData.market_data.current_price.usd || 0} changedValue={3.4} title="Toncoin" />
+            </div>
+            <div className="flex-1">
+              <StatisticCard value={tonData.market_data.market_cap.usd || 0} changedValue={3.4} title="Market Cap" />
+            </div>
+          </div>
+          }
+        </div>
+        </div>
         {(categories as Category[] || []).map((category, index) => {
           const appData = category.applications.data as DataResponse<Application>[];
           return <SectionAppsOfCategory
             key={index}
-            className="py-16 lg:py-28"
+            className="py-16 "
             heading={category.name}
             gridClass="md:grid-cols-2 lg:grid-cols-3"
             subHeading={category.subTitle}
